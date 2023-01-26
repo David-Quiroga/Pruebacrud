@@ -1,111 +1,57 @@
-const userForm = document.querySelector("#userForm");
+const userFrom = document.querySelector('#userForm')
+//Variable vacia
+let users = []
 
-let users = [];
-let editing = false;
-let userId = null;
-
-window.addEventListener("DOMContentLoaded", async () => {
+window.addEventListener('DOMContentLoaded', async () => {
   const response = await fetch("/api/users");
-  const data = await response.json();
-  users = data;
-  renderUser(users);
+  const data = await response.json()
+  users = data
+  renderUser(users)
 });
+// Tiene codigo asincrono
+userFrom.addEventListener('submit', async e => {
+  e.preventDefault()
 
-userForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const username = userForm["username"].value;
-  const password = userForm["password"].value;
-  const email = userForm["email"].value;
+  const company = userFrom['company'].value
+  const email   = userFrom['email'].value
+  const descrip = userFrom['descrip'].value
+  const sector  = userFrom['sector'].value
 
-  if (!editing) {
-    // send user to backend
-    const response = await fetch("/api/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-        email,
-      }),
-    });
+  const response = await fetch('/api/users', {
+    method: 'POST',
+// Los datos que se envian del server es un json
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      company:  company,
+      email:    email,
+      descrip:  descrip,
+      sector:   sector
+    })
+  })
+  //metodos asincronos
+  const data = await response.json()
+  console.log(data)
+})
 
-    const data = await response.json();
-    users.push(data);
-    renderUser(users);
-  } else {
-    const response = await fetch(`/api/users/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-        email,
-      }),
-    });
-    const updatedUser = await response.json();
-
-    users = users.map((user) =>
-      user.id === updatedUser.id ? updatedUser : user
-    );
-    console.log(users)
-    renderUser(users);
-
-    editing = false;
-    userId = null;
-  }
-  userForm.reset();
-});
-
-function renderUser(users) {
-  const userList = document.querySelector("#userList");
-  userList.innerHTML = "";
+function  renderUser(users) {
+  const userList = document.querySelector('#userList')
+  userList.innerHTML = ''
   users.forEach((user) => {
-    const userItem = document.createElement("li");
-    userItem.classList = "list-group-item list-group-item-dark my-2";
+    const userItem = document.createElement('li')
+    userItem.classList = "list-group-item list-group-item-dark my-2"
     userItem.innerHTML = `
-        <header class="d-flex justify-content-between align-items-center">
-          <h3>${user.username}</h3>
-          <div>
-            <button data-id="${user.id}" class="btn-delete btn btn-danger btn-sm">Delete</button>
-            <button data-id="${user.id}" class="btn-edit btn btn-secondary btn-sm">Edit</button>
-          </div>
-        </header>
-        <p>${user.email}</p>
-        <p class="text-truncate">${user.password}</p>
-    `;
+    <header class="d-flex justify-content-between align-items-center">
+    <h3>${user.company}</h3>
+    </header>
+    <p>${user.email}</p>
+    <p>${user.sector}</p>
+    <p class="text-truncate">${user.descrip}</p>
+    `
+    userList.append(userItem)
+  })
 
-    // Handle delete button
-    const btnDelete = userItem.querySelector(".btn-delete");
+  //Se crean los usuarios con el foreach
 
-    btnDelete.addEventListener("click", async (e) => {
-      const response = await fetch(`/api/users/${user.id}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-
-      users = users.filter((user) => user.id !== data.id);
-      renderUser(users);
-    });
-
-    userList.appendChild(userItem);
-
-    // Handle edit button
-    const btnEdit = userItem.querySelector(".btn-edit");
-
-    btnEdit.addEventListener("click", async (e) => {
-      const response = await fetch(`/api/users/${user.id}`);
-      const data = await response.json();
-
-      userForm["username"].value = data.username;
-      userForm["email"].value = data.email;
-
-      editing = true;
-      userId = user.id;
-    });
-  });
 }

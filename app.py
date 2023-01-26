@@ -39,13 +39,14 @@ def get_users():
 @app.post('/api/users')
 def create_user():
     new_user = request.get_json()
-    username = new_user['username']
-    email = new_user['email']
-    password = Fernet(key).encrypt(bytes(new_user['password'], 'utf-8'))
-    conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=extras.RealDictCursor)
-    cur.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s) RETURNING *",
-                (username, email, password))
+    company  = new_user['company']
+    email    = new_user['email']
+    descrip  = new_user['descrip']
+    sector   = new_user['sector']
+    conn     = get_db_connection()
+    cur      = conn.cursor(cursor_factory=extras.RealDictCursor)
+    cur.execute("INSERT INTO users (company, email, descrip, sector) VALUES (%s, %s, %s, %s) RETURNING *",
+                (company, email, descrip, sector))
     new_user = cur.fetchone()
     conn.commit()
     cur.close()
@@ -73,11 +74,12 @@ def update_user(id):
     conn = get_db_connection()
     cur = conn.cursor(cursor_factory=extras.RealDictCursor)
     new_user = request.get_json()
-    username = new_user['username']
-    email = new_user['email']
-    password = Fernet(key).encrypt(bytes(new_user['password'], 'utf-8'))
-    cur.execute("UPDATE users SET username = %s, email = %s, password = %s WHERE id = %s RETURNING *",
-                (username, email, password, id))
+    company  = new_user['company']
+    descrip  = new_user['descrip']
+    email    = new_user['email']
+    sector   = new_user['sector']
+    cur.execute("UPDATE users SET username = %s, email = %s, descrip = %s, sector = %s WHERE id = %s RETURNING *",
+                (company, email, descrip, sector,  id))
     updated_user = cur.fetchone()
     conn.commit()
     cur.close()
