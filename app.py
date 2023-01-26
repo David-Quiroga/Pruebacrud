@@ -1,13 +1,11 @@
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, jsonify, request, render_template
 from psycopg2 import connect, extras
-from cryptography.fernet import Fernet
 from os import environ
 #from dotenv import load_dotenv
 
 #load_dotenv()
 
 app = Flask(__name__)
-key = Fernet.generate_key()
 
 host = 'localhost'
 port = 5432
@@ -15,9 +13,6 @@ dbname = 'crud'
 user = 'postgres'
 password = 'Campos0430'
 
-def get_connection():
-    conn = connect(host=host, port=port, dbname=dbname, user=user, password=password)
-    return conn
 
 def get_db_connection():
     conn = connect(host=host, dbname=dbname,
@@ -78,7 +73,7 @@ def update_user(id):
     descrip  = new_user['descrip']
     email    = new_user['email']
     sector   = new_user['sector']
-    cur.execute("UPDATE users SET username = %s, email = %s, descrip = %s, sector = %s WHERE id = %s RETURNING *",
+    cur.execute("UPDATE users SET company = %s, email = %s, descrip = %s, sector = %s WHERE id = %s RETURNING *",
                 (company, email, descrip, sector,  id))
     updated_user = cur.fetchone()
     conn.commit()
@@ -105,7 +100,7 @@ def delete_user(id):
 
 @app.get('/')
 def home():
-    return send_file('static/index.html')
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

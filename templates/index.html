@@ -5,18 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro</title>
-    <link
-      rel="stylesheet"
-      href="https://bootswatch.com/5/yeti/bootstrap.min.css"
-    />
+    <link rel="stylesheet" href="https://bootswatch.com/5/quartz/bootstrap.min.css" >
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos/estilos.css') }}">
   </head>
-  <body class="bg-secondary">
+
+  <body>
     <div class="container">
       <div class="col-md-4 offset-md-4">
-        <h1 class="fs-3 text-center">Registro de empresas de Ecuador</h1>
+        <h1 class="fs-3 text-center">Registro de empresas del Mundo 🪐 </h1>
 
         <form class="card card-body bg-dark text-white" id="userForm">
-          <label for="username">Nombre de la Empresa:</label>
+          <label for="username"><b>Nombre de la Empresa:</b></label>
           <input
             name="company"
             type="text"
@@ -43,7 +42,7 @@
             required
           />
 
-          <label for="sector">Sector</label>
+          <label for="sector">Sector/Pais</label>
           <input
             name="sector"
             type="sector"
@@ -60,5 +59,6 @@
     </div>
 
     <script src="/static/main.js"></script>
+    
   </body>
 </html>
